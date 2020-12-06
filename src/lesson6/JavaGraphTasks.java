@@ -1,9 +1,9 @@
 package lesson6;
 
 import kotlin.NotImplementedError;
+import lesson6.impl.GraphBuilder;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class JavaGraphTasks {
@@ -65,8 +65,26 @@ public class JavaGraphTasks {
      * |
      * J ------------ K
      */
+    //Трудоемкость O(V + E)
+    //Реурсоемкость O(V + E)
     public static Graph minimumSpanningTree(Graph graph) {
-        throw new NotImplementedError();
+        GraphBuilder spanning = new GraphBuilder();
+        if (graph.getVertices().isEmpty()) return  spanning.build();
+        ArrayDeque<Graph.Vertex> needToVisit = new ArrayDeque<>(graph.getVertices());
+        Set<Graph.Vertex> visited = new HashSet<>();
+        while (!needToVisit.isEmpty()){
+            Graph.Vertex current = needToVisit.pop();
+            visited.add(current);
+            for (Graph.Vertex neighbour: graph.getNeighbors(current)){
+                if (!visited.contains(neighbour) || graph.getNeighbors(current).size() == 1) {
+                    spanning.addVertex(current.getName());
+                    spanning.addVertex(neighbour.getName());
+                    spanning.addConnection(current, neighbour, 1);
+                    visited.add(neighbour);
+                }
+            }
+        }
+        return spanning.build();
     }
 
     /**
@@ -119,8 +137,26 @@ public class JavaGraphTasks {
      *
      * Ответ: A, E, J, K, D, C, H, G, B, F, I
      */
+    //Трудоемкость O(V*E)
+    //Ресурсоемкость O(V + E)
     public static Path longestSimplePath(Graph graph) {
-        throw new NotImplementedError();
+        Path longestPath = new Path();
+        Set<Graph.Vertex> vertices = graph.getVertices();
+        ArrayDeque<Path> paths = new ArrayDeque<>();
+
+        for (Graph.Vertex vertex : vertices){
+            paths.push(new Path(vertex));
+        }
+
+        while (!paths.isEmpty()){
+            Path current = paths.pop();
+            if (current.getLength() > longestPath.getLength()) longestPath = current;
+            Set<Graph.Vertex> neighbors = graph.getNeighbors(current.getVertices().get(current.getLength()));
+            for (Graph.Vertex neighbour : neighbors){
+                if (!current.contains(neighbour)) paths.push(new Path(current, graph, neighbour));
+            }
+        }
+        return longestPath;
     }
 
 

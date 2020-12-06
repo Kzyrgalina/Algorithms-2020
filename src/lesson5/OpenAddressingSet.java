@@ -9,11 +9,13 @@ import java.util.Set;
 
 public class OpenAddressingSet<T> extends AbstractSet<T> {
 
+    private Object removedObj = new Object();
+
     private final int bits;
 
-    private final int capacity;
+    private final int capacity; //вместимость
 
-    private final Object[] storage;
+    private final Object[] storage; // место хранения
 
     private int size = 0;
 
@@ -67,7 +69,7 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
         int startingIndex = startingIndex(t);
         int index = startingIndex;
         Object current = storage[index];
-        while (current != null) {
+        while (current != null && current != removedObj) {
             if (current.equals(t)) {
                 return false;
             }
@@ -93,9 +95,20 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
      *
      * Средняя
      */
+
+    // Трудоемкость - O(n), Ресурсоемкость - О(1)
     @Override
     public boolean remove(Object o) {
-        return super.remove(o);
+        if (!contains(o)) return false;
+        int startInd = startingIndex(o);
+        int index = startInd;
+        while (!storage[index].equals(o) && storage[index] != null){
+            index = (index + 1) % capacity;
+            if (index == startInd) return false;
+        }
+        storage[index] = removedObj;
+        size--;
+        return true;
     }
 
     /**
@@ -112,6 +125,42 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
     @Override
     public Iterator<T> iterator() {
         // TODO
-        throw new NotImplementedError();
+        // throw new NotImplementedError();
+        return new OpenAddressingSetIterator();
+    }
+
+    public class OpenAddressingSetIterator implements Iterator<T>{
+
+        int count = 0;
+        int index = 0;
+        Object current;
+
+        // Трудоемкость - O(1), ресурсоемкость - О(1)
+        @Override
+        public boolean hasNext() {
+            return count < size;
+        }
+
+        // Трудоемкость - O(n), ресурсоемкость - О(1)
+        @Override
+        public T next() {
+            if (!hasNext()) throw new IllegalStateException();
+            while (storage[index] == null || storage[index] == removedObj){
+                index++;
+            }
+            current = storage[index];
+            index++;
+            count++;
+            return (T) current;
+        }
+
+        //Трудоемкость - О(1), ресуерсоемкость - О(1)
+        @Override
+        public void remove() {
+            if (current == null || current == removedObj) throw new IllegalStateException();
+            storage[index - 1] = removedObj;
+            size--;
+            count--;
+        }
     }
 }

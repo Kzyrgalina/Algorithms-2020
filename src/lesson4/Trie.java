@@ -1,7 +1,7 @@
 package lesson4;
 
 import java.util.*;
-import kotlin.NotImplementedError;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,8 +92,62 @@ public class Trie extends AbstractSet<String> implements Set<String> {
     @NotNull
     @Override
     public Iterator<String> iterator() {
-        // TODO
-        throw new NotImplementedError();
+        return new TrieIterator();
     }
 
+    public class TrieIterator implements Iterator{
+        private ArrayDeque<String> deque;
+        private String currentElement;
+
+
+        public TrieIterator() {
+             deque = new ArrayDeque<>();
+             currentElement = null;
+             fillDeque(root, "");
+        }
+
+        //Трудоемкость O(N) N - количество букв в слове
+        //Ресурсоемкость O(1)
+        private void fillDeque(Node parent, String word){
+            Map<Character, Node> childrenMap = parent.children;
+            //StringBuilder sb = new StringBuilder(word);
+            if (!childrenMap.isEmpty()){
+                for (Map.Entry<Character, Node> element: childrenMap.entrySet()) {
+                    Character character = element.getKey();
+                    Node node = element.getValue();
+                    if (character != (char) 0) {
+                        fillDeque(node,word + character);
+                    } else {
+                        deque.addFirst(word);
+                    }
+                }
+            }
+        }
+
+        //Трудоемкость O(1)
+        //Ресурсоемкость O(1)
+        @Override
+        public boolean hasNext() {
+            return !deque.isEmpty();
+        }
+
+        //Трудоемкость O(1)
+        //Ресурсоемкость O(1)
+        @Override
+        public Object next() {
+            if (!hasNext()) throw new IllegalStateException();
+            String next = deque.poll();
+            currentElement = next;
+            return next;
+        }
+
+        //Трудоемкость O(N)
+        //Ресурсоемкость O(1)
+        @Override
+        public void remove() {
+            if (currentElement == null) throw new IllegalStateException();
+            Trie.this.remove(currentElement);
+            currentElement = null;
+        }
+    }
 }

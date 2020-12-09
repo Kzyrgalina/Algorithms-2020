@@ -84,13 +84,12 @@ public class JavaDynamicTasks {
                 indexMax = i;
             }
         }
-
         while (indexMax > -1){
             answer.add(list.get(indexMax));
             indexMax = recAnswer[indexMax];
         }
-        
 
+        Collections.reverse(answer);
         return answer;
     }
 

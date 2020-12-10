@@ -91,6 +91,16 @@ public class Trie extends AbstractSet<String> implements Set<String> {
      */
     @NotNull
     @Override
+
+    /*
+    * В среднем трудоемкость O(N), ресурсоемкость O(N), где N - количество букв в слове.
+    * Это не критично, если речь идет, например, о словаре. Так как максимальная длина одного слова
+    * не более нескольких десятков символов.
+    * Моя реализация не оптимальна по памяти, так как все слова сохраняются в очередь в начале работы итератора.
+    * Можно было хранить меньшее количество информации, если искать следующий элемент в ходе итерации.
+    * Трудоемкость останется O(N), однако ресурсоемкость, преодполагаю, будет константной.
+    * */
+
     public Iterator<String> iterator() {
         return new TrieIterator();
     }
@@ -99,18 +109,16 @@ public class Trie extends AbstractSet<String> implements Set<String> {
         private ArrayDeque<String> deque;
         private String currentElement;
 
-
         public TrieIterator() {
              deque = new ArrayDeque<>();
              currentElement = null;
              fillDeque(root, "");
         }
 
-        //Трудоемкость O(N) N - количество букв в слове
-        //Ресурсоемкость O(1)
+        //Трудоемкость O(N), где N - количество букв в слове
+        //Ресурсоемкость O(N), создание map размера N + новые переменные создаются N раз
         private void fillDeque(Node parent, String word){
             Map<Character, Node> childrenMap = parent.children;
-            //StringBuilder sb = new StringBuilder(word);
             if (!childrenMap.isEmpty()){
                 for (Map.Entry<Character, Node> element: childrenMap.entrySet()) {
                     Character character = element.getKey();
@@ -131,7 +139,7 @@ public class Trie extends AbstractSet<String> implements Set<String> {
             return !deque.isEmpty();
         }
 
-        //Трудоемкость O(1)
+        //Трудоемкость O(1), т.к. удаление первого элемента из очереди производится за О(1)
         //Ресурсоемкость O(1)
         @Override
         public Object next() {
@@ -141,7 +149,7 @@ public class Trie extends AbstractSet<String> implements Set<String> {
             return next;
         }
 
-        //Трудоемкость O(N)
+        //Трудоемкость O(N), где N - количество букв в слове
         //Ресурсоемкость O(1)
         @Override
         public void remove() {

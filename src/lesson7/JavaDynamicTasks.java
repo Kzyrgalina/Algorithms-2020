@@ -18,13 +18,14 @@ public class JavaDynamicTasks {
      * Если есть несколько самых длинных общих подпоследовательностей, вернуть любую из них.
      * При сравнении подстрок, регистр символов *имеет* значение.
      */
-    //Трудоемкость O(N * M), Ресурсоемкость O(N * M), где N - first.length, M - second.length
+    //Трудоемкость O(N * M),
+    //Ресурсоемкость O(N * M), где N - first.length, M - second.length
     public static String longestCommonSubSequence(String first, String second) {
         int fl = first.length();
         int sl = second.length();
-        int[][] matrix = new int[fl + 1][sl + 1];
+        int[][] matrix = new int[fl + 1][sl + 1]; //Р-ть O(N * M)
 
-        for (int i = 0; i < fl + 1; i++) {
+        for (int i = 0; i < fl + 1; i++) { //Т-ть O(N * M)
             for (int j = 0; j < sl + 1; j++) {
                 if (i == 0 || j == 0) matrix[i][j] = 0;
                 else if (first.charAt(i - 1) == second.charAt(j - 1)) matrix[i][j] = matrix[i - 1][j - 1] + 1;
@@ -56,18 +57,19 @@ public class JavaDynamicTasks {
      * то вернуть ту, в которой числа расположены раньше (приоритет имеют первые числа).
      * В примере ответами являются 2, 8, 9, 12 или 2, 5, 9, 12 -- выбираем первую из них.
      */
-    //Трудоемкость O(n^2) Ресурсоемкость O(n)
+    //Трудоемкость O(N^2)
+    //Ресурсоемкость O(N), где N - list.size
     public static List<Integer> longestIncreasingSubSequence(List<Integer> list) {
         int size = list.size();
         AbstractList<Integer> answer = new ArrayList<>();
-        int[] index = new int[size];
-        int[] recAnswer = new int[size];
+        int[] index = new int[size]; //Р-ть O(N)
+        int[] recAnswer = new int[size]; //Р-ть O(N)
         int lengthMax = 0;
         int indexMax = 0;
 
         if (list.size() < 2) return list;
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) { //Т-ть O(N^2)
             recAnswer[i] = -1;
             index[i]  = 1;
             for (int j = 0; j < i; j++) {

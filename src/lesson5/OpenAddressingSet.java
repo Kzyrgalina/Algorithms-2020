@@ -1,6 +1,5 @@
 package lesson5;
 
-import kotlin.NotImplementedError;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractSet;
@@ -13,9 +12,9 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
 
     private final int bits;
 
-    private final int capacity; //вместимость
+    private final int capacity;
 
-    private final Object[] storage; // место хранения
+    private final Object[] storage;
 
     private int size = 0;
 
@@ -96,7 +95,14 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
      * Средняя
      */
 
-    // Трудоемкость - O(n), Ресурсоемкость - О(1)
+    /*
+    * Трудоемкось операции удаления зависит от заполненности таблицы.
+    * Если в ней всего несколько элементов, то трудоемкость близка к O(1).
+    * Когда таблица переполняется, трудоемкость превращается в линейную.
+    * */
+
+    // Трудоемкость O(N) - максимальная трудоемкость, где N - размер
+    // Ресурсоемкость О(1)
     @Override
     public boolean remove(Object o) {
         if (!contains(o)) return false;
@@ -124,8 +130,6 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        // TODO
-        // throw new NotImplementedError();
         return new OpenAddressingSetIterator();
     }
 
@@ -135,13 +139,16 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
         int index = 0;
         Object current;
 
-        // Трудоемкость - O(1), ресурсоемкость - О(1)
+        // Трудоемкость O(1)
+        // Ресурсоемкость О(1)
         @Override
         public boolean hasNext() {
             return count < size;
         }
 
-        // Трудоемкость - O(n), ресурсоемкость - О(1)
+        // Трудоемкость O(N) - максимальная, если, например, таблица близка к переполнению,
+        // а удаление еще не производилось. N - размер.
+        // Ресурсоемкость О(1)
         @Override
         public T next() {
             if (!hasNext()) throw new IllegalStateException();
@@ -154,7 +161,8 @@ public class OpenAddressingSet<T> extends AbstractSet<T> {
             return (T) current;
         }
 
-        //Трудоемкость - О(1), ресуерсоемкость - О(1)
+        //Трудоемкость - О(1)
+        // Ресуерсоемкость - О(1)
         @Override
         public void remove() {
             if (current == null || current == removedObj) throw new IllegalStateException();

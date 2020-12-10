@@ -67,6 +67,7 @@ abstract class AbstractTrieTest {
         }
     }
 
+    //тесты покрывают все случаи
     protected fun doIteratorTest() {
         implementationTest { create().iterator().hasNext() }
         implementationTest { create().iterator().next() }
@@ -104,6 +105,11 @@ abstract class AbstractTrieTest {
                 controlSet.isEmpty(),
                 "TrieIterator doesn't traverse the entire set."
             )
+            //собственный дополнительный тест
+            assertFalse(
+                trieIter.hasNext(),
+                "TrieIterator contains elements after cleaning."
+            )
             assertFailsWith<IllegalStateException>("Something was supposedly returned after the elements ended") {
                 trieIter.next()
             }
@@ -111,6 +117,7 @@ abstract class AbstractTrieTest {
         }
     }
 
+    //тесты покрывают все случаи
     protected fun doIteratorRemoveTest() {
         implementationTest { create().iterator().remove() }
         val random = Random()

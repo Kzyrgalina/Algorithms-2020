@@ -65,18 +65,20 @@ public class JavaGraphTasks {
      * |
      * J ------------ K
      */
+
     //Трудоемкость O(V + E)
     //Реурсоемкость O(V + E)
     public static Graph minimumSpanningTree(Graph graph) {
         GraphBuilder spanning = new GraphBuilder();
         if (graph.getVertices().isEmpty()) return  spanning.build();
-        ArrayDeque<Graph.Vertex> needToVisit = new ArrayDeque<>(graph.getVertices());
-        Set<Graph.Vertex> visited = new HashSet<>();
-        while (!needToVisit.isEmpty()){
+        ArrayDeque<Graph.Vertex> needToVisit = new ArrayDeque<>(graph.getVertices()); //Р-ть max O(V)
+        Set<Graph.Vertex> visited = new HashSet<>(); //Р-ть max O(V)
+        while (!needToVisit.isEmpty()){ //Т-ть O(V)
             Graph.Vertex current = needToVisit.pop();
             visited.add(current);
             for (Graph.Vertex neighbour: graph.getNeighbors(current)){
-                if (!visited.contains(neighbour) || graph.getNeighbors(current).size() == 1) {
+                if (!visited.contains(neighbour) || graph.getNeighbors(current).size() == 1
+                        && needToVisit.size() != 0) { //Т-ть O(E)
                     spanning.addVertex(current.getName());
                     spanning.addVertex(neighbour.getName());
                     spanning.addConnection(current, neighbour, 1);
@@ -137,22 +139,23 @@ public class JavaGraphTasks {
      *
      * Ответ: A, E, J, K, D, C, H, G, B, F, I
      */
-    //Трудоемкость O(V*E)
-    //Ресурсоемкость O(V + E)
+    //Трудоемкость O(V^2) - максмальная
+    //Ресурсоемкость O(V^2) - максимальная
     public static Path longestSimplePath(Graph graph) {
         Path longestPath = new Path();
-        Set<Graph.Vertex> vertices = graph.getVertices();
-        ArrayDeque<Path> paths = new ArrayDeque<>();
+        Set<Graph.Vertex> vertices = graph.getVertices(); //Р-ть O(V)
+        ArrayDeque<Path> paths = new ArrayDeque<>(); //Р-ть max O(V^2)
 
-        for (Graph.Vertex vertex : vertices){
+        for (Graph.Vertex vertex : vertices){ //Т-ть O(V)
             paths.push(new Path(vertex));
         }
 
-        while (!paths.isEmpty()){
+        while (!paths.isEmpty()){ //Т-ть max O(V)
             Path current = paths.pop();
             if (current.getLength() > longestPath.getLength()) longestPath = current;
-            Set<Graph.Vertex> neighbors = graph.getNeighbors(current.getVertices().get(current.getLength()));
+            Set<Graph.Vertex> neighbors = graph.getNeighbors(current.getVertices().get(current.getLength())); //Р-ть max O(V)
             for (Graph.Vertex neighbour : neighbors){
+                //T-ть max O(V)
                 if (!current.contains(neighbour)) paths.push(new Path(current, graph, neighbour));
             }
         }

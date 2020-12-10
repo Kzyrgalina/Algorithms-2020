@@ -3,10 +3,7 @@ package lesson5
 import ru.spbstu.kotlin.generate.util.nextString
 import java.util.*
 import kotlin.math.abs
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 abstract class AbstractOpenAddressingSetTest {
 
@@ -74,6 +71,13 @@ abstract class AbstractOpenAddressingSetTest {
                     expectedSize, openAddressingSet.size,
                     "The size of the set is not as expected."
                 )
+                //собственный тест
+                openAddressingSet.clear()
+                val myRandom = random.nextInt(32)
+                assertFalse(
+                    openAddressingSet.remove(myRandom),
+                    "An element not contained in set was deleted."
+                )
             }
         }
     }
@@ -92,6 +96,10 @@ abstract class AbstractOpenAddressingSetTest {
                 openAddressingSet.iterator().hasNext(),
                 "Iterator of an empty set should not have any next elements."
             )
+            //собственный тест
+            assertFailsWith<IllegalStateException>("Something was supposedly returned from empty set.") {
+                openAddressingSet.iterator().next()
+            }
             for (element in controlSet) {
                 openAddressingSet += element
             }
@@ -113,6 +121,12 @@ abstract class AbstractOpenAddressingSetTest {
                 controlSet.isEmpty(),
                 "OpenAddressingSetIterator doesn't traverse the entire set."
             )
+            //собственный тест
+            assertFalse(
+                openAddressingSetIter.hasNext(),
+                "OpenAddressingSetIterator doesn't traverse the entire set." +
+                        "Set contains elements after cleaning."
+            )
             assertFailsWith<IllegalStateException>("Something was supposedly returned after the elements ended") {
                 openAddressingSetIter.next()
             }
@@ -126,6 +140,11 @@ abstract class AbstractOpenAddressingSetTest {
             val controlSet = mutableSetOf<String>()
             val removeIndex = random.nextInt(15) + 1
             var toRemove = ""
+            //собственный тест
+            val emptyIter = controlSet.iterator()
+            assertFailsWith<IllegalStateException>("Something was deleted from empty set before the iteration started") {
+                emptyIter.remove()
+            }
             for (i in 1..15) {
                 val string = random.nextString("abcdefgh12345678", 1, 15)
                 controlSet.add(string)
